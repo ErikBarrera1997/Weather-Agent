@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.geometry.*?>
+
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="MariSoftware_Weather_Gui.WindowController"
+           style="-fx-background-color: linear-gradient(to bottom, #1e3c72, #2a5298); -fx-background-radius: 15; -fx-padding: 20;">
+
+    <VBox fx:id="weatherBoxFailed" spacing="10" alignment="CENTER">
+        <Label fx:id="errorLabel" text="" style="-fx-text-fill: red; -fx-font-size: 12px;" visible="false" />
+    </VBox>
+
+</StackPane>
