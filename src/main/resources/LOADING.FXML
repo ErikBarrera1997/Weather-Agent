@@ -11,20 +11,9 @@
            stylesheets="@styles.css"
            styleClass="app-root">
 
-    <VBox fx:id="weatherBox" spacing="10" alignment="CENTER" styleClass="card">
-        <Label fx:id="cityLabel" styleClass="title" />
-
-        <HBox spacing="10" alignment="CENTER" styleClass="row">
-            <StackPane fx:id="weatherIcon" styleClass="icon-slot"/>
-            <Label fx:id="conditionLabel" styleClass="condition" />
-        </HBox>
-
-        <Label fx:id="temperatureText" styleClass="caption" />
-
-        <Label fx:id="temperatureLabel" styleClass="temperature" />
+    <VBox fx:id="weatherBoxLoading" spacing="10" alignment="CENTER" styleClass="card">
+        <Label fx:id="loadingLabel" text="" styleClass="loading" visible="false" />
     </VBox>
-
-    <Label fx:id="errorLabel" text="" styleClass="error" visible="false" />
 
     <Button fx:id="refreshButton" text="Refresh" onAction="#handleRefresh" styleClass="refresh-button"
             visible="false" StackPane.alignment="BOTTOM_RIGHT">

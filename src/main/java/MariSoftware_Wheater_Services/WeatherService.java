@@ -15,13 +15,20 @@ import java.nio.charset.StandardCharsets;
 public class WeatherService {
     private static final String API_KEY = "18ed03220e4c2cd1057ada45338b4ace";
     private static final String BASE_URL = "https://api.openweathermap.org/data/2.5/weather";
+    private static final String UNITS_PARAM = "metric";
+    private static final int TIMEOUT_MS = 5000;
+    private static final Gson GSON = new Gson();
+    private static final Object CACHE_LOCK = new Object();
+    private static CacheEntry cacheEntry;
 
     public static Location getWeather(String city, String countryCode) throws IOException {
         String query = String.format("%s,%s", city, countryCode);
-        String urlStr = String.format("%s?q=%s&units=metric&appid=%s", BASE_URL, URLEncoder.encode(query, StandardCharsets.UTF_8), API_KEY);
+        String urlStr = String.format("%s?q=%s&units=%s&appid=%s", BASE_URL, URLEncoder.encode(query, StandardCharsets.UTF_8), UNITS_PARAM, API_KEY);
 
         HttpURLConnection conn = (HttpURLConnection) new URL(urlStr).openConnection();
         conn.setRequestMethod("GET");
+        conn.setConnectTimeout(TIMEOUT_MS);
+        conn.setReadTimeout(TIMEOUT_MS);
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
             StringBuilder response = new StringBuilder();
@@ -30,7 +37,7 @@ public class WeatherService {
                 response.append(line);
             }
 
-            JsonObject json = new Gson().fromJson(response.toString(), JsonObject.class);
+            JsonObject json = GSON.fromJson(response.toString(), JsonObject.class);
 
             String location = json.getAsJsonArray("weather")
                     .get(0).getAsJsonObject()
@@ -43,4 +50,45 @@ public class WeatherService {
         }
     }
 
+    public static Location getWeatherCached(String city, String countryCode, long ttlMillis, boolean forceRefresh) throws IOException {
+        if (!forceRefresh) {
+            CacheEntry cached = getValidCache(city, countryCode, ttlMillis);
+            if (cached != null) {
+                return cached.location;
+            }
+        }
+
+        Location fresh = getWeather(city, countryCode);
+        synchronized (CACHE_LOCK) {
+            cacheEntry = new CacheEntry(city, countryCode, fresh, System.currentTimeMillis());
+        }
+        return fresh;
+    }
+
+    private static CacheEntry getValidCache(String city, String countryCode, long ttlMillis) {
+        synchronized (CACHE_LOCK) {
+            if (cacheEntry == null) {
+                return null;
+            }
+            if (!cacheEntry.city.equalsIgnoreCase(city) || !cacheEntry.countryCode.equalsIgnoreCase(countryCode)) {
+                return null;
+            }
+            long age = System.currentTimeMillis() - cacheEntry.timestamp;
+            return age <= ttlMillis ? cacheEntry : null;
+        }
+    }
+
+    private static class CacheEntry {
+        private final String city;
+        private final String countryCode;
+        private final Location location;
+        private final long timestamp;
+
+        private CacheEntry(String city, String countryCode, Location location, long timestamp) {
+            this.city = city;
+            this.countryCode = countryCode;
+            this.location = location;
+            this.timestamp = timestamp;
+        }
+    }
 }
