@@ -30,8 +30,10 @@ public class Launch extends Application{
             positionStage(stage);
         });
 
-        stage.widthProperty().addListener((obs, oldVal, newVal) -> positionStage(stage));
-        stage.heightProperty().addListener((obs, oldVal, newVal) -> positionStage(stage));
+        stage.widthProperty().addListener((
+                obs, oldVal, newVal) -> positionStage(stage));
+        stage.heightProperty().addListener((
+                obs, oldVal, newVal) -> positionStage(stage));
     }
 
     private void positionStage(Stage stage) {

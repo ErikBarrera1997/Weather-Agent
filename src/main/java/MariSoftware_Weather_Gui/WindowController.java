@@ -4,7 +4,6 @@ import MariSoftware_Weather_Functions.WeatherAnimations;
 import MariSoftware_Wheater_Services.LocationService;
 import MariSoftware_Wheater_Services.WeatherService;
 import Marisoftware_Wheater_Data.Location;
-import javafx.animation.ScaleTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -12,7 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.util.Duration;
+
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -47,16 +46,16 @@ public class WindowController {
     }
 
     public void initialize() {
-        Node weatherElement = WeatherAnimations.getWeatherAnimation("clear");
-        ScaleTransition pulse = new ScaleTransition(Duration.seconds(1), weatherElement);
-        pulse.setFromX(1);
-        pulse.setToX(1.2);
-        pulse.setFromY(1);
-        pulse.setToY(1.2);
-        pulse.setCycleCount(ScaleTransition.INDEFINITE);
-        pulse.setAutoReverse(true);
-        pulse.play();
-        weatherIcon.getChildren().setAll(weatherElement);
+//        Node weatherElement = WeatherAnimations.getWeatherAnimation("clear");
+//        ScaleTransition pulse = new ScaleTransition(Duration.seconds(1), weatherElement);
+//        pulse.setFromX(1);
+//        pulse.setToX(1.2);
+//        pulse.setFromY(1);
+//        pulse.setToY(1.2);
+//        pulse.setCycleCount(ScaleTransition.INDEFINITE);
+//        pulse.setAutoReverse(true);
+//        pulse.play();
+//        weatherIcon.getChildren().setAll(weatherElement);
 
         refreshWeather(true);
         scheduler.scheduleAtFixedRate(() -> refreshWeather(false), REFRESH_INTERVAL_MS, REFRESH_INTERVAL_MS, TimeUnit.MILLISECONDS);
