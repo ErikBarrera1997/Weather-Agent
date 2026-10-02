@@ -4,6 +4,7 @@ import MariSoftware_Weather_Functions.WeatherAnimations;
 import MariSoftware_Wheater_Services.LocationService;
 import MariSoftware_Wheater_Services.WeatherService;
 import Marisoftware_Wheater_Data.Location;
+import Marisoftware_Wheater_Data.UserLocation;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -31,8 +32,7 @@ public class WindowController {
     @FXML private Button refreshButton;
 
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-    private String cachedCity;
-    private String cachedCountry;
+    private UserLocation cachedLocation;
 
     @FXML
     private void handleClose() {
@@ -63,14 +63,12 @@ public class WindowController {
 
     private void refreshWeather(boolean forceRefresh) {
         try {
-            String[] location = LocationService.getCityAndCountryCached(REFRESH_INTERVAL_MS, forceRefresh);
-            cachedCity = location[0];
-            cachedCountry = location[1];
+            cachedLocation = LocationService.getLocationCached(REFRESH_INTERVAL_MS, forceRefresh);
 
-            Location temperature = WeatherService.getWeatherCached(cachedCity, cachedCountry, REFRESH_INTERVAL_MS, forceRefresh);
+            Location temperature = WeatherService.getWeatherCached(cachedLocation, REFRESH_INTERVAL_MS, forceRefresh);
 
             Platform.runLater(() -> {
-                cityLabel.setText("Clima en: " + cachedCity);
+                cityLabel.setText("Clima en: " + cachedLocation.getCity());
                 conditionLabel.setText(temperature.getWeather());
                 temperatureText.setText("Temperatura");
                 temperatureLabel.setText(String.format("%.1f\u00B0C", temperature.getTemperature()));
